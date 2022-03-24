@@ -12,8 +12,15 @@ namespace API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           modelBuilder.Entity<ProductVariant>()
-                .HasKey(x => new { x.ProductId, x.ProductTypeId });
+            modelBuilder.Entity<CartItem>()
+                .HasKey(x => new { x.UserId, x.ProductId, x.ProductTypeId });
+
+            modelBuilder.Entity<ProductVariant>()
+                 .HasKey(x => new { x.ProductId, x.ProductTypeId });
+
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(x => new {x.OrderId, x.ProductId, x.ProductTypeId});
+
             modelBuilder.Entity<ProductType>().HasData(
                   new ProductType { Id = 1, Name = "Default" },
                   new ProductType { Id = 2, Name = "Paperback" },
@@ -261,5 +268,9 @@ namespace API.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }
