@@ -12,6 +12,9 @@ namespace API.Data
             _httpContextAccessor = httpContextAccessor;
         }
         public IProductRepository ProductRepository => new ProductRepository(_context, _httpContextAccessor);
+
+        public ICategoryRepository CategoryRepository => new CategoryRepository(_context);
+
         public async Task<bool> completeAsync()
         {
            return await _context.SaveChangesAsync() > 0;
