@@ -1,10 +1,12 @@
 ﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class DataContext : IdentityDbContext<AppUser>
+    public class DataContext : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>,
+        AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DataContext(DbContextOptions options) : base(options)
         {
@@ -12,6 +14,20 @@ namespace API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AppUser>()
+                .HasMany(ur => ur.UserRoles)
+                .WithOne(u => u.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+
+            modelBuilder.Entity<AppRole>()
+                .HasMany(ur => ur.UserRoles)
+                .WithOne(u => u.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+
             modelBuilder.Entity<CartItem>()
                 .HasKey(x => new { x.UserId, x.ProductId, x.ProductTypeId });
 
@@ -19,7 +35,7 @@ namespace API.Data
                  .HasKey(x => new { x.ProductId, x.ProductTypeId });
 
             modelBuilder.Entity<OrderItem>()
-                .HasKey(x => new {x.OrderId, x.ProductId, x.ProductTypeId});
+                .HasKey(x => new { x.OrderId, x.ProductId, x.ProductTypeId });
 
             modelBuilder.Entity<ProductType>().HasData(
                   new ProductType { Id = 1, Name = "Default" },
@@ -262,7 +278,7 @@ namespace API.Data
                     OriginalPrice = 399m
                 }
             );
-            base.OnModelCreating(modelBuilder);
+           
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
