@@ -10,6 +10,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -18,9 +19,10 @@ namespace API.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet("admin"), Authorize(Roles = "Admin")]
+        [HttpGet("admin"))]
         public async Task<ActionResult<Response<List<Product>>>> GetAdminProducts()
         {
+
             var result = await _unitOfWork.ProductRepository.GetAdminProducts();
             return Ok(result);
         }
